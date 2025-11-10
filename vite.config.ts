@@ -5,6 +5,9 @@ import { createServer } from "./server";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  // مهم لـ GitHub Pages: خليها اسم الريبو بالظبط
+  base: "/zenith-oasis-webcam-enabled/",
+
   server: {
     host: process.env.HOST || "0.0.0.0",
     port: Number(process.env.PORT) || 8080,
@@ -19,7 +22,9 @@ export default defineConfig(({ mode }) => ({
       deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "server/**"],
     },
   },
+
   build: {
+    // انت محددها كده، فهاننشر من dist/spa
     outDir: "dist/spa",
     rollupOptions: {
       output: {
@@ -31,6 +36,7 @@ export default defineConfig(({ mode }) => ({
       },
     },
   },
+
   plugins: [react(), expressPlugin()],
   resolve: {
     alias: {
@@ -43,11 +49,9 @@ export default defineConfig(({ mode }) => ({
 function expressPlugin(): Plugin {
   return {
     name: "express-plugin",
-    apply: "serve", // Only apply during development (serve mode)
+    apply: "serve", // فقط أثناء التطوير
     configureServer(server) {
       const app = createServer();
-
-      // Add Express app as middleware to Vite dev server
       server.middlewares.use(app);
     },
   };
