@@ -20,7 +20,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <ErrorBoundary>
-        <BrowserRouter>
+      <BrowserRouter basename="/zenith-oasis-webcam-enabled">
           <Layout>
             <Routes>
               <Route path="/" element={<Index />} />
