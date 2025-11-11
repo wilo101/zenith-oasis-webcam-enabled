@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Camera, CircleDot, Info, Maximize2, Pause, Play, Square } from "lucide-react";
+import { Camera, CircleDot, FlipHorizontal2, Info, Maximize2, Pause, Play, Square } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -36,6 +36,7 @@ export default function IpCameraFeed({
   const [actionInfo, setActionInfo] = useState<string>("");
   const [actionError, setActionError] = useState<string>("");
   const [paused, setPaused] = useState(false);
+  const [mirror, setMirror] = useState(false);
 
   const effectiveSrc = useMemo(() => {
     if (paused) return "";
@@ -126,13 +127,24 @@ export default function IpCameraFeed({
     const ctx = canvas.getContext("2d");
     if (!ctx) return false;
     try {
+      ctx.save();
+      if (mirror) {
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
+      }
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      ctx.restore();
       return true;
     } catch (err) {
       console.warn("Unable to draw IP camera frame", err);
+      try {
+        ctx.restore();
+      } catch {
+        // ignore restore failure
+      }
       return false;
     }
-  }, []);
+  }, [mirror]);
 
   const finalizeRecording = useCallback(() => {
     setRecording(false);
@@ -346,6 +358,18 @@ export default function IpCameraFeed({
     </Tooltip>
   );
 
+  const imageStyle = useMemo<React.CSSProperties>(() => {
+    const style: React.CSSProperties = {};
+    if (paused) {
+      style.opacity = 0.1;
+    }
+    if (mirror) {
+      style.transform = "scaleX(-1)";
+      style.transformOrigin = "center";
+    }
+    return style;
+  }, [paused, mirror]);
+
   return (
     <div ref={containerRef} className={cn("space-y-3", className)}>
       <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-red-900/40 bg-black/50 px-3 py-2 backdrop-blur-sm">
@@ -383,6 +407,21 @@ export default function IpCameraFeed({
               </button>
             </TooltipTrigger>
             <TooltipContent>Download current frame as PNG</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="inline-flex items-center gap-1.5 rounded bg-black/60 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-widest text-red-100 transition hover:bg-red-900/40"
+                onClick={() => setMirror((value) => !value)}
+                type="button"
+              >
+                <FlipHorizontal2 size={14} />
+                {mirror ? "Unmirror" : "Mirror"}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {mirror ? "Restore original orientation" : "Flip the stream horizontally"}
+            </TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -442,7 +481,7 @@ export default function IpCameraFeed({
           alt={title}
           onLoad={handleLoad}
           onError={handleError}
-          style={paused ? { opacity: 0.1 } : undefined}
+          style={Object.keys(imageStyle).length ? imageStyle : undefined}
         />
         {paused && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/70 px-4 text-center text-xs text-red-100">
