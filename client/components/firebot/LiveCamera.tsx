@@ -16,9 +16,11 @@ export default function LiveCamera({ className }: Props) {
         className,
       )}
     >
-      <div className="mb-3 flex items-center justify-between">
-        <div className="text-xs font-semibold uppercase tracking-widest text-soft">Camera Source</div>
-        <div className="flex gap-2">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <div className="text-xs font-semibold uppercase tracking-widest text-soft sm:text-[11px]">
+          Camera Source
+        </div>
+        <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setMode("ip")}
             className={`rounded border px-3 py-1.5 text-[11px] uppercase tracking-widest transition ${

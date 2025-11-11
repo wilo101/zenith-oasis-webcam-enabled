@@ -1,8 +1,8 @@
-import { ReactNode, Suspense, lazy, useCallback, useEffect, useState } from "react";
+import { ReactNode, Suspense, lazy, useCallback, useEffect, useMemo, useState } from "react";
 import ThemeToggle from "./ThemeToggle";
 import { Link } from "react-router-dom";
 import SplashScreen from "./SplashScreen";
-import WelcomeScreen from "./WelcomeScreen";
+import LayoutContext from "./firebot/LayoutContext";
 
 const GuidedTour = lazy(() => import("./GuidedTour"));
 
@@ -10,7 +10,6 @@ export default function Layout({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);
   const [tourOpen, setTourOpen] = useState(false);
   const [showSplash, setShowSplash] = useState(false);
-  const [showWelcome, setShowWelcome] = useState(false);
   useEffect(() => {
     setMounted(true);
     const stored = localStorage.getItem("theme");
@@ -30,7 +29,6 @@ export default function Layout({ children }: { children: ReactNode }) {
     setShowSplash(true);
     const t = window.setTimeout(() => {
       setShowSplash(false);
-      setShowWelcome(true);
     }, 1200);
     return () => window.clearTimeout(t);
   }, [mounted]);
@@ -43,11 +41,6 @@ export default function Layout({ children }: { children: ReactNode }) {
     } catch {
       window.scrollTo(0, 0);
     }
-  }, []);
-
-  const startAfterWelcome = useCallback(() => {
-    setShowWelcome(false);
-    setTourOpen(true);
   }, []);
 
   // Always start at top on mount and disable browser scroll restoration
@@ -90,10 +83,18 @@ export default function Layout({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const layoutValue = useMemo(
+    () => ({
+      requestTour: () => setTourOpen(true),
+    }),
+    [],
+  );
+
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <nav className="sticky top-0 z-40 border-b border-red-900/30 bg-gradient-to-r from-black/60 via-[#130a0a]/70 to-black/60 backdrop-blur supports-[backdrop-filter]:bg-black/40">
-        <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8 h-14 flex items-center justify-between">
+    <LayoutContext.Provider value={layoutValue}>
+      <div className="min-h-screen bg-background text-foreground">
+        <nav className="sticky top-0 z-40 border-b border-red-900/30 bg-gradient-to-r from-black/60 via-[#130a0a]/70 to-black/60 backdrop-blur supports-[backdrop-filter]:bg-black/40">
+        <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 md:h-14 md:flex-nowrap md:gap-6 md:px-6 md:py-0 lg:px-8">
           <Link to="/" className="inline-flex items-center gap-2">
             <span className="text-sm font-semibold tracking-widest uppercase text-primary">AFR</span>
           </Link>
@@ -118,7 +119,6 @@ export default function Layout({ children }: { children: ReactNode }) {
         © {new Date().getFullYear()} FireBot — Imperial Operations Console
       </footer>
       {showSplash && <SplashScreen onDone={() => { /* handled by timer */ }} />}
-      {showWelcome && <WelcomeScreen onStart={startAfterWelcome} />}
       <Suspense fallback={null}>
         <GuidedTour
           steps={[
@@ -162,6 +162,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           onClose={closeTour}
         />
       </Suspense>
-    </div>
+      </div>
+    </LayoutContext.Provider>
   );
 }

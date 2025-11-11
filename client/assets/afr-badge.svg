@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320">
+  <defs>
+    <radialGradient id="g-bg" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#341216" />
+      <stop offset="65%" stop-color="#130608" />
+      <stop offset="100%" stop-color="#050304" />
+    </radialGradient>
+    <linearGradient id="g-armor" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5d697" />
+      <stop offset="100%" stop-color="#b07c38" />
+    </linearGradient>
+    <linearGradient id="g-visor" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#610a0d" />
+      <stop offset="55%" stop-color="#ff2438" />
+      <stop offset="100%" stop-color="#ffa09d" />
+    </linearGradient>
+    <linearGradient id="g-suit" x1="0%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#bd1d2a" />
+      <stop offset="100%" stop-color="#530614" />
+    </linearGradient>
+    <filter id="f-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="22" flood-color="#000" flood-opacity="0.55" />
+    </filter>
+  </defs>
+
+  <g filter="url(#f-shadow)">
+    <circle cx="160" cy="160" r="146" fill="url(#g-bg)" stroke="#caa167" stroke-width="10" />
+  </g>
+
+  <path
+    d="M204 74c-24.5 0-41 14.5-52.5 40l-20 11c-14 6-21 22-16 36l6 18-14 10c-8 6-11 17-6 26l10 18 48-10 28 6c8 2 16-3 18-11l5-20c3-1 6-3 8-4 16-9 21-30 11-45l-2-3 18-12c22-14 27-44 10-64-13-15-32-20-52-16Z"
+    fill="url(#g-armor)"
+  />
+  <path
+    d="M138 212c32-3 65-33 74-73l-10-35-52 9-20 55z"
+    fill="#30343b"
+    opacity="0.75"
+  />
+  <path
+    d="M179 103c-29 6-51 29-58 59 25 10 61-5 84-33l-26-26Z"
+    fill="#0d1219"
+    opacity="0.85"
+  />
+  <path
+    d="M188 92c-4 0-7 3-7 7 0 19 15 34 34 34 4 0 7-3 7-7v-3c0-24-12-35-34-31Z"
+    fill="url(#g-visor)"
+  />
+  <path
+    d="M243 88c10 2 20 8 26 17 12 16 8 39-9 50l-21 13-24-64 28-16Z"
+    fill="#9b1224"
+    opacity="0.8"
+  />
+  <path
+    d="M144 214c-10-15-32-20-47-10-6 4-9 11-7 18 2 6 8 11 14 12 24 5 46-4 54-20l-14-0.5Z"
+    fill="url(#g-suit)"
+  />
+
+  <g transform="translate(50 200)">
+    <path
+      d="M58 36h104l18 62H40l18-62Z"
+      fill="#0c0b0d"
+      stroke="#e2b76a"
+      stroke-width="6"
+      stroke-linejoin="round"
+    />
+    <text x="110" y="74" text-anchor="middle" font-family="Rajdhani, sans-serif" font-size="48" font-weight="700" letter-spacing="0.22em" fill="#f2dfc3">
+      AFR
+    </text>
+    <text x="110" y="104" text-anchor="middle" font-family="Rajdhani, sans-serif" font-size="20" letter-spacing="0.35em" fill="#c0a06d">
+      AUGUSTUS FIREFIGHTER ROBOT
+    </text>
+  </g>
+</svg>
+
