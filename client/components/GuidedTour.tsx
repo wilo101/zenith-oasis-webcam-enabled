@@ -23,16 +23,6 @@ export default function GuidedTour({ steps, open, onClose }: Props) {
   const [tooltipSize, setTooltipSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
   const [navSize, setNavSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
   const maskId = useId();
-  const [maskEnabled, setMaskEnabled] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const enabled =
-      typeof window.CSS !== "undefined" &&
-      typeof window.CSS.supports === "function" &&
-      window.CSS.supports("mask-image", "url(#tour-mask)");
-    setMaskEnabled(enabled);
-  }, []);
 
   const currentStep = steps[index];
 
@@ -280,23 +270,15 @@ export default function GuidedTour({ steps, open, onClose }: Props) {
       </svg>
       <div
         className="absolute inset-0 pointer-events-none"
-        style={
-          highlight && maskEnabled
-            ? {
-                background: "rgba(6, 6, 6, 0.72)",
-                mask: `url(#${maskId})`,
-                WebkitMask: `url(#${maskId})`,
-              }
-            : highlight
-              ? { background: "rgba(0, 0, 0, 0.6)" }
-              : { background: "rgba(6, 6, 6, 0.72)" }
-        }
+        style={{
+          background: "rgba(8, 8, 8, 0.72)",
+        }}
       />
 
       {!stepNotVisible && (
         <div
           aria-hidden
-          className="pointer-events-none absolute border border-red-400/90 shadow-[0_0_24px_rgba(248,113,113,0.6)]"
+          className="pointer-events-none absolute border border-red-400/80 shadow-[0_0_24px_rgba(248,113,113,0.42)]"
           style={{
             left: highlight!.x,
             top: highlight!.y,
@@ -304,7 +286,12 @@ export default function GuidedTour({ steps, open, onClose }: Props) {
             height: highlight!.height,
             borderRadius: highlightRadius,
           }}
-        />
+        >
+          <div
+            className="pointer-events-none absolute inset-[6px] rounded-[10px] bg-[#120202]/70"
+            style={{ borderRadius: Math.max(highlightRadius - 4, 6) }}
+          />
+        </div>
       )}
 
       <div
