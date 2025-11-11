@@ -247,7 +247,7 @@ export default function MapPanel({ follow, onFollowChange, heightClass }: Props)
   }
 
   return (
-    <div className="rounded-2xl border border-red-900/40 bg-[#0b1010] shadow-[0_0_24px_rgba(239,68,68,0.08)]">
+    <div className="relative rounded-2xl border border-red-900/40 bg-[#0b1010] shadow-[0_0_24px_rgba(239,68,68,0.08)]">
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-red-900/40 px-4 py-3">
         <div className="flex items-center gap-3">
           <div className="text-sm font-semibold uppercase tracking-widest text-soft">Map Tracking</div>

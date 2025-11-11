@@ -93,7 +93,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <LayoutContext.Provider value={layoutValue}>
       <div className="min-h-screen bg-background text-foreground">
-        <nav className="sticky top-0 z-40 border-b border-red-900/30 bg-gradient-to-r from-black/60 via-[#130a0a]/70 to-black/60 backdrop-blur supports-[backdrop-filter]:bg-black/40">
+        <nav className="sticky top-0 z-40 border-b border-red-900/20 bg-gradient-to-r from-[#090303] via-[#100404] to-[#090303] shadow-[0_8px_24px_rgba(0,0,0,0.55)]">
         <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 md:h-14 md:flex-nowrap md:gap-6 md:px-6 md:py-0 lg:px-8">
           <Link to="/" className="inline-flex items-center gap-2">
             <span className="text-sm font-semibold tracking-widest uppercase text-primary">AFR</span>

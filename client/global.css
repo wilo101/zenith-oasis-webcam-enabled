@@ -134,6 +134,11 @@
     white-space: pre;
   }
 
+  .leaflet-container {
+    z-index: 0 !important;
+  }
+
+
   .robot-marker-wrapper {
     display: flex;
     align-items: center;
