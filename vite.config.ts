@@ -3,10 +3,9 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { createServer } from "./server";
 
-// https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  // مهم لـ GitHub Pages: خليها اسم الريبو بالظبط
-  base: "/zenith-oasis-webcam-enabled/",
+// غيّرنا base لاسم الريبو الجديد
+export default defineConfig(() => ({
+  base: "/Augustus/",
 
   server: {
     host: process.env.HOST || "0.0.0.0",
@@ -24,7 +23,6 @@ export default defineConfig(({ mode }) => ({
   },
 
   build: {
-    // انت محددها كده، فهاننشر من dist/spa
     outDir: "dist/spa",
     rollupOptions: {
       output: {
@@ -49,7 +47,7 @@ export default defineConfig(({ mode }) => ({
 function expressPlugin(): Plugin {
   return {
     name: "express-plugin",
-    apply: "serve", // فقط أثناء التطوير
+    apply: "serve",
     configureServer(server) {
       const app = createServer();
       server.middlewares.use(app);

@@ -250,48 +250,21 @@ export default function GuidedTour({ steps, open, onClose }: Props) {
 
   return createPortal(
     <div className="fixed inset-0 z-[1000] pointer-events-auto" aria-modal="true" role="dialog">
-      <svg className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden focusable="false">
-        <defs>
-          <mask id={maskId}>
-            <rect width="100%" height="100%" fill="white" />
-            {!stepNotVisible && (
-              <rect
-                x={highlight!.x}
-                y={highlight!.y}
-                width={highlight!.width}
-                height={highlight!.height}
-                rx={highlightRadius}
-                ry={highlightRadius}
-                fill="black"
-              />
-            )}
-          </mask>
-        </defs>
-      </svg>
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: "rgba(8, 8, 8, 0.72)",
-        }}
-      />
+      {!highlight && <div className="pointer-events-none absolute inset-0 bg-[rgba(8,8,8,0.72)]" />}
 
       {!stepNotVisible && (
         <div
           aria-hidden
-          className="pointer-events-none absolute border border-red-400/80 shadow-[0_0_24px_rgba(248,113,113,0.42)]"
+          className="pointer-events-none absolute overflow-hidden rounded-[14px] border border-red-400/80 shadow-[0_0_24px_rgba(248,113,113,0.42)]"
           style={{
             left: highlight!.x,
             top: highlight!.y,
             width: highlight!.width,
             height: highlight!.height,
             borderRadius: highlightRadius,
+            boxShadow: "0 0 0 9999px rgba(8,8,8,0.72)",
           }}
-        >
-          <div
-            className="pointer-events-none absolute inset-[6px] rounded-[10px] bg-[#120202]/70"
-            style={{ borderRadius: Math.max(highlightRadius - 4, 6) }}
-          />
-        </div>
+        />
       )}
 
       <div
