@@ -20,7 +20,7 @@ const BASE_LEVELS = { battery: 82, water: 64, pressure: 1.08, temp: 48 };
 const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
 const spring: Transition = { duration: 0.35, ease: [0.22, 1, 0.36, 1] };
 
-// ✅ اتضاف: سكليتون بسيط للفولباك
+// Skeleton fallback
 const PanelSkeleton = ({ label, className }: { label: string; className?: string }) => (
   <div
     className={cn(
@@ -35,7 +35,7 @@ const PanelSkeleton = ({ label, className }: { label: string; className?: string
 );
 
 export default function Index() {
-  // 👇 مدير المراحل: splash → welcome → app
+  // مدير المراحل: splash → welcome → app
   const [stage, setStage] = useState<"splash" | "welcome" | "app">("splash");
   const layoutCtx = useContext(LayoutContext);
 
@@ -75,38 +75,29 @@ export default function Index() {
   useEffect(() => { if (temp >= 65 && shouldNotify("temp")) toast.error("High temperature detected", { description: `${temp.toFixed(0)} °C — redirect or cooldown` }); }, [temp]);
 
   const handleSplashDone = () => setStage("welcome");
-  const handleWelcomeDone = () => {
-    setStage("app");
-  };
+  const handleWelcomeDone = () => setStage("app");
 
   useEffect(() => {
     if (stage !== "app") return;
-    const id = window.setTimeout(() => {
-      layoutCtx?.requestTour();
-    }, 120);
+    const id = window.setTimeout(() => layoutCtx?.requestTour(), 120);
     return () => window.clearTimeout(id);
   }, [layoutCtx, stage]);
 
   // ====== التحكم في العرض بالتتابع (مرحلة واحدة فقط مرئية) ======
-  if (stage === "splash") {
-    return <SplashScreen onDone={handleSplashDone} />;
-  }
-
-  if (stage === "welcome") {
-    return <WelcomeScreen onStart={handleWelcomeDone} />;
-  }
+  if (stage === "splash") return <SplashScreen onDone={handleSplashDone} />;
+  if (stage === "welcome") return <WelcomeScreen onStart={handleWelcomeDone} />;
 
   // ====== بعد الويلكم: الداشبورد ======
   return (
     <TooltipProvider delayDuration={150}>
-      <div className={cn("min-h-screen p-4 md:p-6 lg:p-8", "bg-transparent")}>
-        <div className="mx-auto max-w-7xl space-y-5 md:space-y-7">
+      <div className={cn("min-h-[100svh] p-4 md:p-6 lg:p-8", "bg-transparent")}>
+        <div className="mx-auto w-full max-w-[420px] sm:max-w-2xl lg:max-w-7xl px-3 sm:px-4 space-y-5 md:space-y-7">
           <header className="flex flex-col gap-2">
             <div>
-              <h1 className="text-2xl md:text-3xl font-black uppercase tracking-[0.4em] text-soft">
-                AFR Command Console
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] md:tracking-[0.4em] text-soft">
+                AFR System
               </h1>
-              <p className="text-sm text-gray-300/80">
+              <p className="text-xs sm:text-sm text-gray-300/80">
                 Augustus Firefighter Robot · Mission control, live telemetry, autonomous diagnostics
               </p>
             </div>
@@ -136,14 +127,14 @@ export default function Index() {
                   className="grid gap-3 sm:gap-4 md:gap-6 md:grid-cols-[minmax(0,2.2fr)_minmax(0,1fr)] items-stretch"
                   transition={spring}
                 >
-                  <motion.div layout className="h-full" transition={spring}>
+                  <motion.div layout className="h-full min-w-0" transition={spring}>
                     <div data-tour="cam" className="h-full min-h-[220px] sm:min-h-[320px]">
                       <LiveCamera className="h-full" />
                     </div>
                   </motion.div>
                   <motion.div
                     layout
-                    className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-rows-2"
+                    className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-rows-2 min-w-0"
                     transition={spring}
                   >
                     <motion.div layout data-tour="battery" transition={spring}>
@@ -164,12 +155,12 @@ export default function Index() {
                 <motion.div layout data-tour="map" transition={spring}>
                   <Suspense
                     fallback={
-                      <div className="h-[460px] md:h-[560px]">
+                      <div className="h-[300px] sm:h-[420px] md:h-[560px]">
                         <PanelSkeleton label="Loading Map" className="h-full" />
                       </div>
                     }
                   >
-                    <MapPanel follow={follow} onFollowChange={setFollow} heightClass="h-[460px] md:h-[560px]" />
+                    <MapPanel follow={follow} onFollowChange={setFollow} heightClass="h-[300px] sm:h-[420px] md:h-[560px]" />
                   </Suspense>
                 </motion.div>
 
@@ -188,7 +179,7 @@ export default function Index() {
                 exit={{ opacity: 0, y: -24 }}
                 transition={spring}
               >
-                <motion.div layout className="xl:col-span-2 flex flex-col gap-4 md:gap-6" transition={spring}>
+                <motion.div layout className="xl:col-span-2 flex flex-col gap-4 md:gap-6 min-w-0" transition={spring}>
                   <motion.div layout data-tour="cam" transition={spring}>
                     <LiveCamera />
                   </motion.div>
@@ -198,7 +189,7 @@ export default function Index() {
                     className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-5 lg:gap-6"
                     transition={spring}
                   >
-                    <motion.div layout className="grid gap-4 md:gap-5" transition={spring}>
+                    <motion.div layout className="grid gap-4 md:gap-5 min-w-0" transition={spring}>
                       <motion.div layout data-tour="battery" transition={spring}>
                         <BatteryGauge value={battery} />
                       </motion.div>
@@ -207,7 +198,7 @@ export default function Index() {
                       </motion.div>
                     </motion.div>
 
-                    <motion.div layout className="grid gap-4 md:gap-5" transition={spring}>
+                    <motion.div layout className="grid gap-4 md:gap-5 min-w-0" transition={spring}>
                       <motion.div layout data-tour="water" transition={spring}>
                         <WaterGauge value={water} />
                       </motion.div>
@@ -218,9 +209,11 @@ export default function Index() {
                   </motion.div>
                 </motion.div>
 
-                <motion.div layout className="space-y-4 md:space-y-6" transition={spring}>
+                <motion.div layout className="space-y-4 md:space-y-6 min-w-0" transition={spring}>
                   <motion.div layout data-tour="map" transition={spring}>
-                    <Suspense fallback={<PanelSkeleton label="Loading Map" className="h-[320px]" />}>
+                    <Suspense
+                      fallback={<PanelSkeleton label="Loading Map" className="h-[300px]" />}
+                    >
                       <MapPanel follow={follow} onFollowChange={setFollow} />
                     </Suspense>
                   </motion.div>
