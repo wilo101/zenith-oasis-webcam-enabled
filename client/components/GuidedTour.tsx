@@ -23,11 +23,15 @@ export default function GuidedTour({ steps, open, onClose }: Props) {
   const [tooltipSize, setTooltipSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
   const [navSize, setNavSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
   const maskId = useId();
-  const supportsMask = useMemo(() => {
-    if (typeof window === "undefined") return false;
-    return typeof window.CSS !== "undefined" && typeof window.CSS.supports === "function"
-      ? window.CSS.supports("mask-image", "url(#test)")
-      : false;
+  const [maskEnabled, setMaskEnabled] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const enabled =
+      typeof window.CSS !== "undefined" &&
+      typeof window.CSS.supports === "function" &&
+      window.CSS.supports("mask-image", "url(#tour-mask)");
+    setMaskEnabled(enabled);
   }, []);
 
   const currentStep = steps[index];
@@ -277,13 +281,15 @@ export default function GuidedTour({ steps, open, onClose }: Props) {
       <div
         className="absolute inset-0 pointer-events-none"
         style={
-          highlight && supportsMask
+          highlight && maskEnabled
             ? {
                 background: "rgba(6, 6, 6, 0.72)",
                 mask: `url(#${maskId})`,
                 WebkitMask: `url(#${maskId})`,
               }
-            : { background: "rgba(6, 6, 6, 0.6)" }
+            : highlight
+              ? { background: "rgba(0, 0, 0, 0.6)" }
+              : { background: "rgba(6, 6, 6, 0.72)" }
         }
       />
 
