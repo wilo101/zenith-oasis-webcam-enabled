@@ -7,6 +7,31 @@
 
 @layer base {
   /**
+   * Color System Tokens
+   */
+  :root {
+    /* Background & Panel */
+    --bg-100: #071018;
+    --panel-bg: rgba(10,15,20,0.6);
+    --panel-border: rgba(255,255,255,0.04);
+
+    /* Accent Colors */
+    --accent: #00ffab;
+    --accent-weak: rgba(0,255,171,0.12);
+
+    /* Status Colors */
+    --info: #2db3ff;
+    --success: #00c176;
+    --warning: #ffb84d;
+    --danger: #ff6b6b;
+
+    /* Text Colors */
+    --text-1: rgba(255,255,255,0.92);
+    --text-2: rgba(255,255,255,0.68);
+    --muted: rgba(255,255,255,0.45);
+  }
+
+  /**
    * Tailwind CSS theme
    * tailwind.config.ts expects the following color variables to be expressed as HSL values.
    * A different format will require also updating the theme in tailwind.config.ts.
@@ -169,7 +194,7 @@
     border-radius: 12px;
     background: radial-gradient(circle at 30% 30%, rgba(248, 113, 113, 0.85), rgba(63, 15, 15, 0.95));
     border: 2px solid rgba(248, 113, 113, 0.7);
-    box-shadow: 0 0 18px rgba(248, 113, 113, 0.35);
+    box-shadow: 0 0 8px rgba(248, 113, 113, 0.25);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -187,7 +212,7 @@
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
     border-bottom: 8px solid rgba(248, 113, 113, 0.9);
-    filter: drop-shadow(0 0 6px rgba(248, 113, 113, 0.8));
+    filter: drop-shadow(0 0 4px rgba(248, 113, 113, 0.5));
   }
 
   .robot-marker-core {
@@ -195,7 +220,7 @@
     height: 10px;
     border-radius: 9999px;
     background: radial-gradient(circle, #ffffff 0%, rgba(248, 113, 113, 0.75) 70%);
-    box-shadow: 0 0 12px rgba(248, 113, 113, 0.6);
+    box-shadow: 0 0 6px rgba(248, 113, 113, 0.4);
   }
 
   @keyframes robot-marker-pulse {
@@ -259,5 +284,108 @@
     height: 0.55rem;
     border-radius: 9999px;
     box-shadow: 0 0 10px currentColor;
+  }
+
+  /* Glassmorphism utilities */
+  .glass-panel {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+
+  .glass-panel-strong {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Reduced glow intensity - softer neon effects */
+  .neon-green-glow {
+    color: var(--accent);
+    text-shadow: 0 0 6px rgba(0, 255, 171, 0.3);
+  }
+
+  .neon-green-border {
+    border-color: rgba(0, 255, 171, 0.2);
+    box-shadow: 0 0 6px rgba(0, 255, 171, 0.12);
+  }
+
+  .neon-green-bg {
+    background: var(--accent-weak);
+    box-shadow: 0 0 8px rgba(0, 255, 171, 0.12);
+  }
+
+  /* Unified Glass Panel Style */
+  .bg-panel {
+    background: var(--panel-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--panel-border);
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+  }
+
+  /* Camera/3D Panel - slightly softer shadow */
+  .bg-panel--camera {
+    background: var(--panel-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--panel-border);
+    border-radius: 20px;
+    box-shadow: 0 0 28px rgba(0,0,0,0.32);
+  }
+
+  /* Glow utility classes */
+  .glow-accent {
+    box-shadow: 0 0 8px rgba(0,255,171,0.12);
+  }
+
+  .glow-accent-strong {
+    box-shadow: 0 0 12px rgba(0,255,171,0.18);
+  }
+
+  /* Graph dot glow */
+  .graph-dot-glow {
+    filter: drop-shadow(0 0 6px var(--accent));
+  }
+
+  /* Pump dial inner glow */
+  .pump-dial-glow {
+    box-shadow: 0 0 24px var(--accent-weak) inset;
+  }
+
+  /* Navigation tab active state */
+  .nav-tab--active {
+    box-shadow: 0 0 6px rgba(0,255,171,0.12);
+    transform: translateY(-2px);
+  }
+
+  /* Typography Enhancements */
+  .text-title {
+    color: var(--text-1);
+    @apply font-semibold tracking-wide;
+  }
+
+  .text-label {
+    color: var(--text-2);
+    @apply text-xs uppercase tracking-wider;
+  }
+
+  .text-value {
+    color: var(--text-1);
+    @apply font-medium;
+  }
+
+  .text-metric {
+    color: var(--text-1);
+  }
+
+  /* Map tiles desaturation */
+  .map-wrapper img,
+  .map-wrapper .tile,
+  .leaflet-container img {
+    filter: grayscale(28%) brightness(0.92) contrast(0.95);
   }
 }

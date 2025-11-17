@@ -36,9 +36,13 @@ export default {
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
+          DEFAULT: "#00ffab",
           foreground: "hsl(var(--accent-foreground))",
         },
+        info: "#2db3ff",
+        warn: "#ffb84d",
+        danger: "#ff6b6b",
+        panel: "rgba(10,15,20,0.6)",
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",

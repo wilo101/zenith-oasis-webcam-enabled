@@ -1,15 +1,16 @@
 import { ReactNode, Suspense, lazy, useCallback, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import SplashScreen from "./SplashScreen";
+import { Link, useLocation } from "react-router-dom";
 import LayoutContext from "./firebot/LayoutContext";
 import afrLogo from "@/assets/afr-logo.png"; // ← استيراد اللوجو
 
 const GuidedTour = lazy(() => import("./GuidedTour"));
+const TOUR_ENABLED = false;
 
 export default function Layout({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);
   const [tourOpen, setTourOpen] = useState(false);
-  const [showSplash, setShowSplash] = useState(false);
+  const location = useLocation();
+  const isDashboard = location.pathname === "/" || location.pathname === "/dashboard";
 
   useEffect(() => {
     setMounted(true);
@@ -25,16 +26,8 @@ export default function Layout({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  useEffect(() => {
-    if (!mounted) return;
-    setShowSplash(true);
-    const t = window.setTimeout(() => {
-      setShowSplash(false);
-    }, 1200);
-    return () => window.clearTimeout(t);
-  }, [mounted]);
-
   const closeTour = useCallback(() => {
+    if (!TOUR_ENABLED) return;
     localStorage.setItem("afr-tour-complete", "1");
     setTourOpen(false);
     try {
@@ -45,6 +38,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   }, []);
 
   const toggleTour = useCallback(() => {
+    if (!TOUR_ENABLED) return;
     setTourOpen((prev) => {
       if (prev) {
         localStorage.setItem("afr-tour-complete", "1");
@@ -55,16 +49,26 @@ export default function Layout({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const requestTour = useCallback(() => {
+    if (!TOUR_ENABLED) return;
+    setTourOpen(true);
+  }, []);
+
   const layoutValue = useMemo(
     () => ({
-      requestTour: () => setTourOpen(true),
+      requestTour,
     }),
-    [],
+    [requestTour],
   );
+
+  // Skip navbar and footer for Dashboard page (main page)
+  if (isDashboard) {
+    return <>{mounted && children}</>;
+  }
 
   return (
     <LayoutContext.Provider value={layoutValue}>
-      <div className="min-h-screen bg-background text-foreground">
+      <div className="flex min-h-screen flex-col bg-background text-foreground">
         {/* 🔻 Navbar */}
         <nav className="sticky top-0 z-40 border-b border-red-900/20 bg-gradient-to-r from-[#090303] via-[#100404] to-[#090303] shadow-[0_8px_24px_rgba(0,0,0,0.55)]">
           <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 md:h-16 md:flex-nowrap md:gap-6 md:px-6 lg:px-8">
@@ -83,47 +87,50 @@ export default function Layout({ children }: { children: ReactNode }) {
             {/* 🔻 Tour Button */}
             <div className="flex items-center gap-3">
               <button
+                type="button"
                 onClick={toggleTour}
-                aria-pressed={tourOpen}
+                aria-pressed={TOUR_ENABLED && tourOpen}
+                disabled={!TOUR_ENABLED}
                 className={`inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm md:text-base transition-colors ${
-                  tourOpen
-                    ? "border-red-500/70 bg-red-600/20 text-red-100 hover:bg-red-600/30"
-                    : "border-red-900/40 bg-black/40 text-red-100 hover:bg-black/60"
+                  TOUR_ENABLED
+                    ? tourOpen
+                      ? "border-red-500/70 bg-red-600/20 text-red-100 hover:bg-red-600/30"
+                      : "border-red-900/40 bg-black/40 text-red-100 hover:bg-black/60"
+                    : "cursor-not-allowed border-red-900/40 bg-black/30 text-red-200/70 opacity-70"
                 }`}
               >
-                {tourOpen ? "Close Tour" : "Launch Tour"}
+                {TOUR_ENABLED ? (tourOpen ? "Close Tour" : "Launch Tour") : "Tour Disabled"}
               </button>
             </div>
           </div>
         </nav>
 
         {/* 🔻 Main Content */}
-        <main className="pb-10">{mounted && children}</main>
+        <main className="flex-1 pb-6">{mounted && children}</main>
 
         {/* 🔻 Footer */}
-        <footer className="border-t border-red-900/20 py-4 text-center text-xs text-muted-foreground">
+        <footer className="border-t border-red-900/20 py-3 text-center text-xs text-muted-foreground">
           © {new Date().getFullYear()} Augustus — FireBot Command Console
         </footer>
 
-        {/* 🔻 Splash Screen */}
-        {showSplash && <SplashScreen onDone={() => {}} />}
-
         {/* 🔻 Guided Tour */}
-        <Suspense fallback={null}>
-          <GuidedTour
-            steps={[
-              { selector: "[data-tour=cam]", title: "Robot IP Camera", description: "Live feed with snapshot, recording and fullscreen controls." },
-              { selector: "[data-tour=battery]", title: "Power Levels", description: "Battery gauge and autonomy estimate for the robot." },
-              { selector: "[data-tour=temp]", title: "Thermal Status", description: "Current operating temperature with high-temp alerts." },
-              { selector: "[data-tour=water]", title: "Water Tank", description: "Monitor remaining water capacity and refill thresholds." },
-              { selector: "[data-tour=pressure]", title: "Pump Pressure", description: "Real-time delivery pressure. Keep this within the nominal band." },
-              { selector: "[data-tour=map]", title: "Map Tracking", description: "Clean live map view with GPS toggles and centering controls." },
-              { selector: "[data-tour=diag]", title: "Self Diagnostics", description: "Run system checks and review component health at a glance." },
-            ]}
-            open={tourOpen}
-            onClose={closeTour}
-          />
-        </Suspense>
+        {TOUR_ENABLED && (
+          <Suspense fallback={null}>
+            <GuidedTour
+              steps={[
+                { selector: "[data-tour=cam]", title: "Robot IP Camera", description: "Live feed with snapshot, recording and fullscreen controls." },
+                { selector: "[data-tour=battery]", title: "Power Levels", description: "Battery gauge and autonomy estimate for the robot." },
+                { selector: "[data-tour=temp]", title: "Thermal Status", description: "Current operating temperature with high-temp alerts." },
+                { selector: "[data-tour=water]", title: "Water Tank", description: "Monitor remaining water capacity and refill thresholds." },
+                { selector: "[data-tour=pressure]", title: "Pump Pressure", description: "Real-time delivery pressure. Keep this within the nominal band." },
+                { selector: "[data-tour=map]", title: "Map Tracking", description: "Clean live map view with GPS toggles and centering controls." },
+                { selector: "[data-tour=diag]", title: "Self Diagnostics", description: "Run system checks and review component health at a glance." },
+              ]}
+              open={tourOpen}
+              onClose={closeTour}
+            />
+          </Suspense>
+        )}
       </div>
     </LayoutContext.Provider>
   );

@@ -300,7 +300,7 @@ export default function MapPanel({ follow, onFollowChange, heightClass }: Props)
         </div>
       </div>
       <div className="p-3">
-        <div className={`${heightClass ?? "h-[320px]"} w-full overflow-hidden rounded-xl border border-red-900/40`}>
+        <div className={`map-wrapper ${heightClass ?? "h-[320px]"} w-full overflow-hidden rounded-xl border border-red-900/40`}>
           <MapContainer
             key={mapRefreshKey}
             {...({
