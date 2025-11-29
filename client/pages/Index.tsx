@@ -1,4 +1,4 @@
-import { Suspense, lazy, useContext, useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import LiveCamera from "@/components/firebot/LiveCamera";
 import BatteryGauge from "@/components/firebot/BatteryGauge";
@@ -11,7 +11,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { Transition } from "framer-motion";
 import SplashScreen from "@/components/SplashScreen";
 import WelcomeScreen from "@/components/WelcomeScreen";
-import LayoutContext from "@/components/firebot/LayoutContext";
 
 const MapPanel = lazy(() => import("@/components/firebot/MapPanel"));
 const DiagnosticsPanel = lazy(() => import("@/components/firebot/DiagnosticsPanel"));
@@ -37,7 +36,6 @@ const PanelSkeleton = ({ label, className }: { label: string; className?: string
 export default function Index() {
   // مدير المراحل: splash → welcome → app
   const [stage, setStage] = useState<"splash" | "welcome" | "app">("splash");
-  const layoutCtx = useContext(LayoutContext);
 
   const [battery, setBattery] = useState(82);
   const [water, setWater] = useState(64);
@@ -76,12 +74,6 @@ export default function Index() {
 
   const handleSplashDone = () => setStage("welcome");
   const handleWelcomeDone = () => setStage("app");
-
-  useEffect(() => {
-    if (stage !== "app") return;
-    const id = window.setTimeout(() => layoutCtx?.requestTour(), 120);
-    return () => window.clearTimeout(id);
-  }, [layoutCtx, stage]);
 
   // ====== التحكم في العرض بالتتابع (مرحلة واحدة فقط مرئية) ======
   if (stage === "splash") return <SplashScreen onDone={handleSplashDone} />;
@@ -128,7 +120,7 @@ export default function Index() {
                   transition={spring}
                 >
                   <motion.div layout className="h-full min-w-0" transition={spring}>
-                    <div data-tour="cam" className="h-full min-h-[220px] sm:min-h-[320px]">
+                    <div className="h-full min-h-[220px] sm:min-h-[320px]">
                       <LiveCamera className="h-full" />
                     </div>
                   </motion.div>
@@ -137,22 +129,22 @@ export default function Index() {
                     className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-rows-2 min-w-0"
                     transition={spring}
                   >
-                    <motion.div layout data-tour="battery" transition={spring}>
+                    <motion.div layout transition={spring}>
                       <BatteryGauge value={battery} className="h-full min-h-[150px] sm:min-h-[180px]" />
                     </motion.div>
-                    <motion.div layout data-tour="temp" transition={spring}>
+                    <motion.div layout transition={spring}>
                       <TemperatureCard value={temp} className="h-full min-h-[150px] sm:min-h-[180px]" />
                     </motion.div>
-                    <motion.div layout data-tour="water" transition={spring}>
+                    <motion.div layout transition={spring}>
                       <WaterGauge value={water} className="h-full min-h-[150px] sm:min-h-[180px]" />
                     </motion.div>
-                    <motion.div layout data-tour="pressure" transition={spring}>
+                    <motion.div layout transition={spring}>
                       <PumpPressure value={pressure} className="h-full min-h-[150px] sm:min-h-[180px]" />
                     </motion.div>
                   </motion.div>
                 </motion.div>
 
-                <motion.div layout data-tour="map" transition={spring}>
+                <motion.div layout transition={spring}>
                   <Suspense
                     fallback={
                       <div className="h-[300px] sm:h-[420px] md:h-[560px]">
@@ -164,7 +156,7 @@ export default function Index() {
                   </Suspense>
                 </motion.div>
 
-                <motion.div layout data-tour="diag" transition={spring}>
+                <motion.div layout transition={spring}>
                   <Suspense fallback={<PanelSkeleton label="Diagnostics" className="h-[240px]" />}>
                     <DiagnosticsPanel />
                   </Suspense>
@@ -180,7 +172,7 @@ export default function Index() {
                 transition={spring}
               >
                 <motion.div layout className="xl:col-span-2 flex flex-col gap-4 md:gap-6 min-w-0" transition={spring}>
-                  <motion.div layout data-tour="cam" transition={spring}>
+                  <motion.div layout transition={spring}>
                     <LiveCamera />
                   </motion.div>
 
@@ -190,19 +182,19 @@ export default function Index() {
                     transition={spring}
                   >
                     <motion.div layout className="grid gap-4 md:gap-5 min-w-0" transition={spring}>
-                      <motion.div layout data-tour="battery" transition={spring}>
+                      <motion.div layout transition={spring}>
                         <BatteryGauge value={battery} />
                       </motion.div>
-                      <motion.div layout data-tour="temp" transition={spring}>
+                      <motion.div layout transition={spring}>
                         <TemperatureCard value={temp} />
                       </motion.div>
                     </motion.div>
 
                     <motion.div layout className="grid gap-4 md:gap-5 min-w-0" transition={spring}>
-                      <motion.div layout data-tour="water" transition={spring}>
+                      <motion.div layout transition={spring}>
                         <WaterGauge value={water} />
                       </motion.div>
-                      <motion.div layout data-tour="pressure" transition={spring}>
+                      <motion.div layout transition={spring}>
                         <PumpPressure value={pressure} />
                       </motion.div>
                     </motion.div>
@@ -210,7 +202,7 @@ export default function Index() {
                 </motion.div>
 
                 <motion.div layout className="space-y-4 md:space-y-6 min-w-0" transition={spring}>
-                  <motion.div layout data-tour="map" transition={spring}>
+                  <motion.div layout transition={spring}>
                     <Suspense
                       fallback={<PanelSkeleton label="Loading Map" className="h-[300px]" />}
                     >
@@ -218,7 +210,7 @@ export default function Index() {
                     </Suspense>
                   </motion.div>
 
-                  <motion.div layout data-tour="diag" transition={spring}>
+                  <motion.div layout transition={spring}>
                     <Suspense fallback={<PanelSkeleton label="Diagnostics" className="h-[220px]" />}>
                       <DiagnosticsPanel />
                     </Suspense>
